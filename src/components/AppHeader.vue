@@ -2,6 +2,7 @@
     <div class="main">
         <h1>VueShop!</h1>
         <div class="button-div">
+            <router-link to="/signin">Sign In</router-link>
             <router-link to="/products">Products</router-link>
             <router-link to="/cart">Cart<span class="count">{{ count }}</span></router-link>
         </div>
@@ -47,6 +48,7 @@ a {
     text-decoration: none;
     margin-left: 20px;
     box-shadow: 0 2px 8px #032241;
+    outline: none;
 }
 
 a:hover {
