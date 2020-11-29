@@ -7,6 +7,7 @@ import App from './App.vue'
 import Products from './components/Products.vue';
 import Cart from './components/Cart.vue';
 import Signin from './path/Signin.vue';
+import authModule from './store/auth/index.js';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -14,11 +15,14 @@ const router = createRouter({
         { path: '/', redirect: '/products'},
         { path: '/signin', component: Signin},
         { path: '/products', component: Products },
-        { path: '/cart', component: Cart }
+        { path: '/cart', component: Cart },
     ],
 });
 
 const store = createStore({
+    modules: {
+        auth: authModule,
+    },
     state() {
         return {
             articles: [

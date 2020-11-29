@@ -1,10 +1,10 @@
 <template>
   <div class="main">
-    <h1>Sign In!</h1>
-    <form @submit.prevent="pushSignin">
+    <h1>Sign In or Sign Up</h1>
+    <form @submit.prevent="submitForm">
       <div class="form-control">
-        <label for="userName">User Name</label>
-        <input type="text" name="userName" id="userName" v-model="userName" />
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" v-model="email" />
       </div>
       <div class="form-control">
         <label for="password">Password</label>
@@ -15,7 +15,9 @@
           v-model="password"
         />
       </div>
-      <button type="submit">Sign In</button>
+      <button type="submit" @click="submitType = 'signin'">Sign In</button>
+      <button type="submit" @click="submitType = 'signup'">Sign Up</button>
+      <p v-if="validated === false">Please complete the form</p>
     </form>
   </div>
 </template>
@@ -24,24 +26,52 @@
 export default {
   data() {
     return {
-      userName: "",
+      email: "",
       password: "",
+      validated: true,
+      isLoading: false,
+      error: null,
+      submitType: null
     };
   },
   methods: {
-      pushSignin() {
-          fetch('https://vue-shop-e7ce5.firebaseio.com/users.json', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'applications/json',
-              },
-              body: JSON.stringify({
-                  userName: this.userName,
-                  password: this.password
-              })
-          });
+    checkForm() {
+      if (this.email === "" || this.password === "") {
+        this.validated = false;
+      } else {
+        this.validated = true;
       }
-  }
+    },
+    async submitForm() {
+      this.checkForm();
+      if (this.validated === false) {
+        return;
+      }
+
+      this.isLoading = true;
+      if (this.submitType === "signup") {
+        try {
+          await this.$store.dispatch("signup", {
+            email: this.email,
+            password: this.password,
+          });
+        } catch (err) {
+          this.error = err.message || "authentication failed";
+        }
+        this.isLoading = false;
+      } else if (this.submitType === "signin") {
+        try {
+          await this.$store.dispatch("login", {
+            email: this.email,
+            password: this.password,
+          });
+        } catch (err) {
+          this.error = err.message || "authentication failed";
+        }
+        this.isLoading = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -75,19 +105,18 @@ input {
 }
 
 button {
-    outline: none;
-    display: inline-block;
-    background-color: #5CDB95;
-    padding: 10px 5px;
-    width: 100px;
-    height: 45px;
-    color: #EDF5E1;
-    font-size: 20px;
-    border-style: none;
-    cursor: pointer;
-    border-radius: 10px;
-    text-decoration: none;
-    margin-left: 20px;
-    box-shadow: 0 2px 8px #032241;
+  outline: none;
+  display: inline-block;
+  background-color: #5cdb95;
+  padding: 10px 5px;
+  height: 45px;
+  color: #edf5e1;
+  font-size: 20px;
+  border-style: none;
+  cursor: pointer;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-left: 20px;
+  box-shadow: 0 2px 8px #032241;
 }
 </style>
